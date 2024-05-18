@@ -2,7 +2,8 @@
     margin: 0;
     padding: 0;
 }
-.link-default{
+.link-default,
+.page-link{
     cursor: pointer;
 }
 .head-links{

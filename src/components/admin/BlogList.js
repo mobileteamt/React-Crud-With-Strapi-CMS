@@ -5,6 +5,7 @@ import axios from 'axios';
 import Loader from '../Loader';
 import config from '../Config.json';
 import Swal from 'sweetalert2'
+import Pagination from '../Pagination';
 var API_BASE_URL = config.API_BASE_URL;
 
 export default function BlogList() {
@@ -12,16 +13,27 @@ export default function BlogList() {
     const [data, setData] = useState([]);
     // const [currentDate, setCurrentDate] = useState(GetDate());
     const [isLoading, setIsLoading] = useState(false);
+    let countPerPage = 3;
+  
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(3); // Change as needed
 
-    const filters = "filters[published]=yes";
+    const active = 'false';
+
+    const filters = "pagination[start]="+currentPage+"&pagination[limit]="+itemsPerPage;
+    const filtersEncode = encodeURI(filters);
 
     let blogs = () => {
         axios.get(`${API_BASE_URL}/api/blogs?populate=*`)
         .then(function (response) {
             // handle success
-            // console.log(response.data);
+            console.log(response);
             // console.log(response.data.blogImage);
             setData(response.data.data);
+            // const nextPage = response.data.meta.pagination.start + countPerPage;
+            // const nextLimit = response.data.meta.pagination.limit + countPerPage;
+            // console.log(nextPage);
+            // console.log(nextLimit);
             setIsLoading(false);
         })
         .catch(function (error) {
@@ -40,6 +52,21 @@ export default function BlogList() {
         setIsLoading(true);
         blogs();
     }, [])
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    // console.log(indexOfLastItem);
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    // console.log(indexOfFirstItem);
+
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    // console.log(currentItems);
+
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+    console.log('totalPages:'+totalPages);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const deleteBlog = (e, id) => {
         e.preventDefault();
@@ -100,8 +127,8 @@ export default function BlogList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {data && data.length ? (
-                            data.map((item, index) => {
+                        {currentItems && currentItems.length ? (
+                            currentItems.map((item, index) => {
                                 let blog = item.attributes;
                                 // let imageURL = blog.image.data.attributes.formats.thumbnail.url;
                                 // console.log(blog);
@@ -130,6 +157,9 @@ export default function BlogList() {
                         ) : (<tr><td colSpan={5}>No data found</td></tr>)}
                     </tbody>
                 </Table>
+
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+
             </>
         )
     }
