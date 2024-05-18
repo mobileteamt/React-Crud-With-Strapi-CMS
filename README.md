@@ -1,7 +1,7 @@
 # Blog creation in React using strapi API
 
-- Project Requirements
-    node.js, npx
+- Project Requirements:
+    [node.js, npx]
 - Create and display Blogs using strapi api's
 - To start your application you need run following command
     `npm start`
