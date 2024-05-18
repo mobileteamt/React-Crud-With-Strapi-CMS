@@ -4,7 +4,7 @@
     node.js, npx
 - Create and display Blogs using strapi api's
 - To start your application you need run following command
-    npm start
+    `npm start`
 - To access the admin section: [<your_application_url>/admin]
 
 ## Features
